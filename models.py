@@ -1,11 +1,10 @@
 import datetime
 
-from sqlalchemy import Column, Integer, create_engine, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine(
-    'mysql+pymysql://root:Luffy123@localhost:3306/blog'
-)
+from session import engine
+
 Base = declarative_base(bind=engine)
 
 
