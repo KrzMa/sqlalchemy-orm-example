@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Float
 from sqlalchemy.ext.declarative import declarative_base
 
 from session import engine
@@ -15,6 +15,7 @@ class User(Base):
     first_name = Column(String(50))
     last_name = Column(String(50))
     user_name = Column(String(50), unique=True, nullable=False)
+    salary = Column(Float, default=0)
     email = Column(String(50), unique=True, nullable=False)
     registration_date = Column(DateTime, default=datetime.datetime.now)
 
