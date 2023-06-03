@@ -1,13 +1,13 @@
 from random import choice
 
-from faker import Faker
 from sqlalchemy.exc import IntegrityError
 
-from models import Base, Author, Article
+from models import Base, Author, Article, Hashtag
 from session import session
+from faker import Faker
 
 
-def create_authors(count=50):
+def create_authors(count=100):
     fake = Faker()
     return [
         Author(
@@ -33,32 +33,62 @@ def create_article(author_id):
     )
 
 
-def create_articles(author_id, count=10):
+def create_articles(author_id, count=100):
     return [
         create_article(author_id)
         for _ in range(count)
     ]
 
 
+def create_hashtag(count=10):
+    fake = Faker()
+
+    hashtags = set()
+    while len(hashtags) < count:
+        hashtags.add(fake.word())
+
+    return [
+        Hashtag(name=hashtag)
+        for hashtag in hashtags
+    ]
+
+
+def assign_hashtag_to_article(hashtags, articles):
+    for article in articles:
+        hashtag = choice(hashtags)
+        article.hashtags.append(hashtag)
+
+
 def main():
-    # Create all tables
+    # create all tables
     Base.metadata.create_all()
 
-    # Create authors
-    authors = create_authors(count=1000)
+    # create authors
+    authors = create_authors(500)
     for author in authors:
-        print(f"Adding author {author.login}")
         try:
             session.add(author)
             session.commit()
         except IntegrityError:
             session.rollback()
-            print(f"Author {author.login} already exists")
+            print(f'Authors: {author.login} already exists')
 
-    # Create articles
+    # create articles
     author = choice(authors)
     articles = create_articles(author_id=author.id)
     session.add_all(articles)
+    session.commit()
+
+    # Create hashtags
+    hashtags = create_hashtag(count=100)
+    try:
+        session.add_all(hashtags)
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+
+    # Assign hashtags to articles
+    assign_hashtag_to_article(hashtags, articles)
     session.commit()
 
 
