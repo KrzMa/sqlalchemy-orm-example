@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime, Float
+from sqlalchemy import Column, Integer, String, DateTime, Float, Text, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
 from session import engine
@@ -8,8 +8,8 @@ from session import engine
 Base = declarative_base(bind=engine)
 
 
-class User(Base):
-    __tablename__ = 'users'
+class Author(Base):
+    __tablename__ = 'authors'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     first_name = Column(String(50))
@@ -20,7 +20,19 @@ class User(Base):
     registration_date = Column(DateTime, default=datetime.datetime.now)
 
     def __repr__(self):
-        return f'User({self.user_name})'
+        return f'Author({self.user_name})'
 
 
-Base.metadata.create_all()
+class Article(Base):
+    __tablename__ = 'articles'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(100), nullable=False, unique=True)
+    content = Column(Text, nullable=False)
+    publication_date = Column(DateTime, default=datetime.datetime.now)
+    author_id = Column(Integer, ForeignKey('authors.id'))
+
+    def __repr__(self):
+        return f'Article({self.title})'
+
+

@@ -1,9 +1,9 @@
 from session import session
-from models import User
+from models import Author
 
 
 def main():
-    user = session.query(User).get(42)
+    user = session.query(Author).get(42)
     if user is None:
         print('User with id 42 not found')
         return
@@ -16,7 +16,7 @@ def main():
     session.add(user)
     session.commit()
 
-    user = session.query(User).get(42)
+    user = session.query(Author).get(42)
     print(f'Previous salary: {user.salary}')
 
 
