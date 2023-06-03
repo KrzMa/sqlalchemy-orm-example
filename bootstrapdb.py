@@ -88,8 +88,12 @@ def main():
         session.rollback()
 
     # Assign hashtags to articles
-    assign_hashtag_to_article(hashtags, articles)
-    session.commit()
+
+    try:
+        assign_hashtag_to_article(hashtags, articles)
+        session.commit()
+    except IntegrityError:
+        session.rollback()
 
 
 if __name__ == "__main__":

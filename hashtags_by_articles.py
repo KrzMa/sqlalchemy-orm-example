@@ -13,6 +13,5 @@ def main():
             print(f'\t- {hashtag.name}')
 
 
-
 if __name__ == '__main__':
     main()
