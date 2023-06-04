@@ -20,8 +20,7 @@ class Author(Base):
     email = Column(String(50), unique=True, nullable=False)
     registration_date = Column(DateTime, default=datetime.datetime.now)
 
-    articles = relationship("Article", back_populates='author')
-
+    articles = relationship("Article", back_populates="author", cascade="all, delete, delete-orphan")
 
     def __repr__(self):
         return f"Author({self.login})"
@@ -35,30 +34,58 @@ class Article(Base):
     content = Column(Text, nullable=False)
     publication_date = Column(DateTime, default=datetime.datetime.now)
 
-    author_id = Column(Integer, ForeignKey("authors.id"))
+    author_id = Column(Integer, ForeignKey("authors.id"), nullable=False)
 
-    author = relationship('Author', back_populates='articles')
-    hashtags = relationship('Hashtag', back_populates='articles', secondary='articles_hashtags')
+    author = relationship(
+        "Author",
+        back_populates="articles",
+        single_parent=True,
+        cascade="all, delete, delete-orphan"
+    )
+    hashtags = relationship(
+        "Hashtag",
+        back_populates="articles",
+        single_parent=True,
+        secondary="articles_hashtags",
+        cascade="all, delete, delete-orphan"
+    )
+
     def __repr__(self):
         return f"Article({self.title})"
 
 
 class Hashtag(Base):
-    __tablename__ = 'hashtags'
+    __tablename__ = "hashtags"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False, unique=True)
     creation_date = Column(DateTime, default=datetime.datetime.now)
 
-    articles = relationship('Article', secondary='articles_hashtags', back_populates='hashtags')
+    articles = relationship(
+        "Article",
+        back_populates="hashtags",
+        secondary="articles_hashtags",
+        single_parent=True,
+        cascade="all, delete, delete-orphan"
+    )
 
     def __repr__(self):
-        return f'Hashtag({self.name})'
+        return f"Hashtag({self.name})"
 
 
 article_hashtag = Table(
-    'articles_hashtags',
+    "articles_hashtags",
     Base.metadata,
-    Column('article_id', Integer, ForeignKey('articles.id'), primary_key=True),
-    Column('hashtag_id', Integer, ForeignKey('hashtags.id'), primary_key=True),
+    Column(
+        "article_id",
+        Integer,
+        ForeignKey("articles.id"),
+        primary_key=True
+    ),
+    Column(
+        "hashtag_id",
+        Integer,
+        ForeignKey("hashtags.id"),
+        primary_key=True
+    )
 )
