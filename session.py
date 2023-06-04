@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 engine = create_engine(
-    #'mysql+pymysql://root:Luffy123@localhost:3306/blog'
+    # 'mysql+pymysql://root:Luffy123@localhost:3306/blog'
     'postgresql://postgres:Luffy123@localhost:5432/blog'
 )
 Base = declarative_base()
@@ -16,5 +16,5 @@ def commit_on_success(fn):
         result = fn(*args, **kwargs)
         session.commit()
         return result
-    return wrapper
 
+    return wrapper
