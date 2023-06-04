@@ -5,13 +5,15 @@ from models import Author, Article
 
 
 def main():
-    result = session.query(
+    query = session.query(
         Author.first_name.label('first_name'),
         Author.last_name.label('last_name'),
         func.count('*').label('total')
     ).join(Article).group_by(
         Author.id
     )
+
+    print(query)
     # for author in authors:
     #     if len(author.articles) == 0:
     #         continue
@@ -20,7 +22,7 @@ def main():
     #         author.last_name,
     #         len(author.articles)
     #     )
-    for record in result:
+    for record in query:
         print(
             record.first_name,
             record.last_name,
